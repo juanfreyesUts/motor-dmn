@@ -1,0 +1,41 @@
+services:
+  dmn-sidecar:
+    build: .
+    image: dmn-sidecar:0.0.1
+    container_name: dmn-sidecar
+    ports:
+      - "8080:8080"
+    environment:
+      # Perfil activo de Spring (dev por defecto; usa 'prod' en despliegue real).
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-dev}
+      # Tuning JVM (sobreescribe el ENV del Dockerfile).
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
+      # Tuning del pool de hilos de Tomcat.
+      - TOMCAT_MAX_THREADS=${TOMCAT_MAX_THREADS:-200}
+    restart: unless-stopped
+
+    # Apagado ordenado: da tiempo a terminar peticiones en curso.
+    stop_grace_period: 30s
+
+    # Healthcheck: marca el contenedor como healthy solo cuando Actuator responde.
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+    # Limites de recursos para cargas altas y estabilidad.
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+      # Para 'docker stack deploy' (Swarm/produccion): varias replicas.
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
