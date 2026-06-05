@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             id="credit-decision"
+             name="Credit Decision"
+             namespace="http://example.com/credit-decision">
+
+  <inputData id="edad_input" name="edad"/>
+  <inputData id="ingresos_input" name="ingresos"/>
+
+  <decision id="elegibilidad" name="Elegibilidad">
+    <informationRequirement id="req_edad">
+      <requiredInput href="#edad_input"/>
+    </informationRequirement>
+    <informationRequirement id="req_ingresos">
+      <requiredInput href="#ingresos_input"/>
+    </informationRequirement>
+
+    <decisionTable id="dt_elegibilidad" hitPolicy="FIRST">
+      <input id="input_edad" label="edad">
+        <inputExpression id="ie_edad" typeRef="number">
+          <text>edad</text>
+        </inputExpression>
+      </input>
+      <input id="input_ingresos" label="ingresos">
+        <inputExpression id="ie_ingresos" typeRef="number">
+          <text>ingresos</text>
+        </inputExpression>
+      </input>
+      <output id="out_aprobado" name="aprobado" typeRef="boolean"/>
+      <output id="out_categoria" name="categoria" typeRef="string"/>
+
+      <rule id="rule_premium">
+        <description>Perfil Premium</description>
+        <inputEntry id="c1"><text>&gt;= 25</text></inputEntry>
+        <inputEntry id="c2"><text>&gt;= 3000</text></inputEntry>
+        <outputEntry id="o1"><text>true</text></outputEntry>
+        <outputEntry id="o2"><text>"Premium"</text></outputEntry>
+      </rule>
+
+      <rule id="rule_standard">
+        <description>Perfil Standard</description>
+        <inputEntry id="c3"><text>&gt;= 18</text></inputEntry>
+        <inputEntry id="c4"><text>&gt;= 1000</text></inputEntry>
+        <outputEntry id="o3"><text>true</text></outputEntry>
+        <outputEntry id="o4"><text>"Standard"</text></outputEntry>
+      </rule>
+
+      <rule id="rule_rechazado">
+        <description>No cumple requisitos</description>
+        <inputEntry id="c5"><text>-</text></inputEntry>
+        <inputEntry id="c6"><text>-</text></inputEntry>
+        <outputEntry id="o5"><text>false</text></outputEntry>
+        <outputEntry id="o6"><text>"Rechazado"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+</definitions>
