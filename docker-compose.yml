@@ -12,7 +12,22 @@ services:
       - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
       # Tuning del pool de hilos de Tomcat.
       - TOMCAT_MAX_THREADS=${TOMCAT_MAX_THREADS:-200}
+      # --- Traduccion de mensajes (Google Cloud Translation) ---
+      # Los secretos se leen del entorno / archivo .env (NUNCA literales aqui).
+      # Copia .env.example a .env y rellena los valores; .env esta en .gitignore.
+      # Ponlo en true para activar la traduccion (se elige idioma via cabecera Accept-Language).
+      - TRANSLATION_ENABLED=${TRANSLATION_ENABLED:-false}
+      # Opcion A (recomendada): cuenta de servicio. Apunta al JSON montado en 'volumes'.
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS:-/secrets/gcp-translate-key.json}
+      # Opcion B (mas simple): API key. Si la usas, deja vacio GOOGLE_APPLICATION_CREDENTIALS.
+      - GOOGLE_TRANSLATE_API_KEY=${GOOGLE_TRANSLATE_API_KEY:-}
     restart: unless-stopped
+
+    # Credenciales de Google (Opcion A). DESCOMENTA este bloque cuando vayas a activar
+    # la traduccion con cuenta de servicio: coloca tu JSON en ./secrets/gcp-translate-key.json.
+    # (Si usas API key -Opcion B- no necesitas este volumen.)
+    # volumes:
+    #   - ./secrets/gcp-translate-key.json:/secrets/gcp-translate-key.json:ro
 
     # Apagado ordenado: da tiempo a terminar peticiones en curso.
     stop_grace_period: 30s

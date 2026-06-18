@@ -20,7 +20,21 @@
     <properties>
         <java.version>21</java.version>
         <drools.version>10.0.0</drools.version>
+        <google-cloud-libraries-bom.version>26.83.0</google-cloud-libraries-bom.version>
     </properties>
+
+    <!-- BOM de Google Cloud: alinea las versiones de todas las librerias GCP -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>${google-cloud-libraries-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Spring Boot Web -->
@@ -49,6 +63,11 @@
             <version>${drools.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-dmn-validation</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-xml-support</artifactId>
             <version>${drools.version}</version>
@@ -62,6 +81,12 @@
             <groupId>org.drools</groupId>
             <artifactId>drools-model-compiler</artifactId>
             <version>${drools.version}</version>
+        </dependency>
+
+        <!-- Google Cloud Translation (API V2) — traduccion de mensajes de validacion -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-translate</artifactId>
         </dependency>
 
         <!-- Test -->
